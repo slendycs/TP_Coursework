@@ -1,0 +1,58 @@
+name: Testing on pull request
+
+on:
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  preparing:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+  
+  build:
+    needs: preparing
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure project
+      run: |
+        cmake -B build -S .
+
+    - name: Build project and tests
+      run: |
+        cmake --build build --parallel $(nproc)
+
+    # Сохраняем папку build как артефакт
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: build/
+
+  testing:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: build/  # Распаковываем артефакт в папку build
+    
+    - name: Fix permissions  # Добавлено!
+      run: chmod +x build/*_tests
+      
+    - name: Run all tests
+      run: |
+        cd build && ctest --output-on-failure
