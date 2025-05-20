@@ -1,4 +1,6 @@
 #include "directed_graph.h"
+#include <queue>
+#include <limits>
 
 // Приватные методы
 
@@ -30,7 +32,7 @@ bool DirectedGraph::isOnlyPositiveVertexes() const
     {
         if (node == nullptr) continue; // Если узел не существует, переходим к следующему
 
-         for (const auto& vertex : *node.get()) 
+        for (const auto& vertex : *node.get()) 
         {
            if (vertex.weight_ <= 0) return false;
         }
@@ -148,4 +150,55 @@ double DirectedGraph::removeVertex(size_t origin, size_t destination)
     // Удаляем ребро
     originVertexes->remove(*temp);
     return weight;
+}
+
+std::unordered_map<size_t, double> DirectedGraph::dijkstra(size_t origin) const 
+{
+    if (!adjacencyList_[origin]) throw std::invalid_argument("Origin node does not exist"); // Проверка на существование исходного узла
+    if (!isOnlyPositiveVertexes()) throw std::logic_error("This graph contains vertexes with negative weights, which prevents Dijkstra's algorithm from running"); // Проверка что все рёюра положительные
+
+    // Инициализация расстояний
+    using Pair = std::pair<double, size_t>;
+    std::priority_queue<Pair, std::vector<Pair>, std::greater<>> queue; // Очередь обхода узлов
+    std::unordered_map<size_t, double> distances; // таблица узлов и расстояний
+
+    // Установка начальных значений
+    for (size_t i = 0; i < adjacencyList_.size(); ++i) 
+    {
+        if (adjacencyList_[i]) 
+        {
+            distances[i] = std::numeric_limits<double>::infinity();
+        }
+    }
+    distances[origin] = 0;
+    queue.emplace(0, origin);
+
+    // Основной цикл обработки узлов
+    while (!queue.empty())
+    {
+        auto [currentDist, currentNode] = queue.top();
+        queue.pop();
+
+        if (currentDist > distances[currentNode]) continue;
+
+        if (auto& vertexes = adjacencyList_[currentNode]) 
+        {
+            // Обход всех смежных узлов
+            for (const auto& vertex : *vertexes) 
+            {
+                // Вычисление нового расстояния
+                double newDist = currentDist + vertex.weight_;
+                
+                // Обновление расстояния, если найден более короткий путь
+                if (newDist < distances[vertex.destination_]) 
+                {
+                    distances[vertex.destination_] = newDist;
+                    queue.emplace(newDist, vertex.destination_);
+                }
+            }
+        }
+    }
+
+    distances.erase(origin);
+    return distances;
 }

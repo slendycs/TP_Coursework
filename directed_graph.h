@@ -124,11 +124,11 @@ public:
     // Удаление ребра между заданными узлами графа
     double removeVertex(size_t origin, size_t destination); 
 
-    // // Алгоритм Дейкстры для поиска кратчайших путей
-    // std::unordered_map<size_t, double> dijkstra(size_t origin) const;
-    // // Алгоритм Беллмана — Форда для поиска кратчайших путей
+    // Алгоритм Дейкстры для поиска кратчайших путей
+    std::unordered_map<size_t, double> dijkstra(size_t origin) const;
+    // Алгоритм Беллмана — Форда для поиска кратчайших путей
     // std::unordered_map<size_t, double> bellmanFord(size_t origin) const;
-    // // Волновой алгоритм для поиска кратчайшего пути между заданной парой вершин
+    // Волновой алгоритм для поиска кратчайшего пути между заданной парой вершин
     // size_t wave(size_t origin, size_t destination) const;    
 
 private:
