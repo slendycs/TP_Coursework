@@ -158,8 +158,7 @@ std::unordered_map<size_t, double> DirectedGraph::dijkstra(size_t origin) const
     if (!isOnlyPositiveVertexes()) throw std::logic_error("This graph contains vertexes with negative weights, which prevents Dijkstra's algorithm from running"); // Проверка что все рёюра положительные
 
     // Инициализация расстояний
-    using Pair = std::pair<double, size_t>;
-    std::priority_queue<Pair, std::vector<Pair>, std::greater<>> queue; // Очередь обхода узлов
+    std::priority_queue<std::pair<double, size_t>, std::vector<std::pair<double, size_t>>, std::greater<>> queue; // Очередь обхода узлов
     std::unordered_map<size_t, double> distances; // таблица узлов и расстояний
 
     // Установка начальных значений
@@ -170,7 +169,7 @@ std::unordered_map<size_t, double> DirectedGraph::dijkstra(size_t origin) const
             distances[i] = std::numeric_limits<double>::infinity();
         }
     }
-    distances[origin] = 0;
+    distances[origin] = 0.0;
     queue.emplace(0, origin);
 
     // Основной цикл обработки узлов
@@ -196,6 +195,69 @@ std::unordered_map<size_t, double> DirectedGraph::dijkstra(size_t origin) const
                     queue.emplace(newDist, vertex.destination_);
                 }
             }
+        }
+    }
+
+    distances.erase(origin);
+    return distances;
+}
+
+std::unordered_map<size_t, double> DirectedGraph::bellmanFord(size_t origin) const
+{
+    // Проверка на существование исходного узла
+    if (searchNode(origin) == false) throw std::invalid_argument("Origin node does not exist");
+
+    // Сбор всех рёбер графа
+    std::vector<std::tuple<size_t, size_t, double>> allVertexes;
+    for (size_t key = 0; key < adjacencyList_.size(); ++key) 
+    {
+        if (auto& vertexes = adjacencyList_[key])
+        {
+            for (const auto& vertex : *vertexes)
+            {
+                allVertexes.emplace_back(key, vertex.destination_, vertex.weight_);
+            }
+        }
+    }
+
+    // Инициализация расстояний
+    std::unordered_map<size_t, double> distances; // таблица узлов и расстояний
+
+    // Установка начальных значений
+    for (size_t i = 0; i < adjacencyList_.size(); ++i) 
+    {
+        if (adjacencyList_[i]) 
+        {
+            distances[i] = std::numeric_limits<double>::infinity();
+        }
+    }
+    distances[origin] = 0.0;
+
+    // Релаксация рёбер (n-1 итераций)
+    for (size_t i = 1; i < realSize_; ++i) 
+    {
+        for (const auto& vertex : allVertexes) 
+        {
+            size_t start = std::get<0>(vertex);
+            size_t destination = std::get<1>(vertex);
+            double weight = std::get<2>(vertex);
+
+            if ((distances[start] != std::numeric_limits<double>::infinity()) && (distances[start] + weight < distances[destination])) 
+            {
+                distances[destination] = distances[start] + weight;
+            }
+        }
+    }
+
+    // Проверка на отрицательные циклы
+    for (const auto& vertex : allVertexes) 
+    {
+        size_t start = std::get<0>(vertex);
+        size_t destination = std::get<1>(vertex);
+        double weight = std::get<2>(vertex);
+        if (distances[start] != std::numeric_limits<double>::infinity() && distances[start] + weight < distances[destination]) 
+        {
+            throw std::logic_error("Graph contains a negative-weight cycle");
         }
     }
 
