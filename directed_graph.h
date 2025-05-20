@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
+#include <memory>
 
 class DirectedGraph
 {
@@ -28,13 +29,17 @@ public:
         size_(other.size_),
         realSize_(other.realSize_)
     {
-        for (const auto& list : other.adjacencyList_) 
+        adjacencyList_.reserve(other.adjacencyList_.size());
+        for (const auto& sourcePtr : other.adjacencyList_) 
         {
-            if (list != nullptr)
+            if (sourcePtr != nullptr)
             {
-                adjacencyList_.push_back(new std::list<Vertex>(*list));
+                adjacencyList_.push_back(std::make_unique<std::list<Vertex>>(*sourcePtr));
             }
-            else adjacencyList_.push_back(nullptr);
+            else 
+            {
+                adjacencyList_.push_back(nullptr);
+            }
         }
     }
 
@@ -44,36 +49,33 @@ public:
         realSize_(other.realSize_),
         adjacencyList_(std::move(other.adjacencyList_)) 
     {
-        // Обнуляем исходный объект
         other.size_ = 0;
         other.realSize_ = 0;
-        other.adjacencyList_.clear();
     }
 
     // Оператор копирующего присваивания
     DirectedGraph&operator=(const DirectedGraph &copy)
     {   
-        if (this == &copy) return *this;
+       if (this == &copy) return *this;
 
         // Освобождаем текущие данные
         size_ = copy.size_;
         realSize_ = copy.realSize_;
-        for (LinkedList<Vertex>* node : adjacencyList_)
-        {
-            delete node;
-        }
         adjacencyList_.clear();
 
         // Копируем данные из объекта
-        for (const auto& list : copy.adjacencyList_) 
+        adjacencyList_.reserve(copy.adjacencyList_.size());
+        for (const auto& sourcePtr : copy.adjacencyList_) 
         {
-            if (list != nullptr)
+            if (sourcePtr != nullptr)
             {
-                adjacencyList_.push_back(new std::list<Vertex>(*list));
+                adjacencyList_.push_back(std::make_unique<std::list<Vertex>>(*sourcePtr));
             }
-            else adjacencyList_.push_back(nullptr);
+            else 
+            {
+                adjacencyList_.push_back(nullptr);
+            }
         }
-
         return *this;
     }
 
@@ -83,10 +85,6 @@ public:
         if (this == &moved) return *this;
         
         // Освобождаем текущие данные
-        for (auto* list : adjacencyList_) 
-        {
-            delete list;
-        }    
         adjacencyList_.clear();
         
         // Переносим данные
@@ -101,14 +99,7 @@ public:
     }
 
     // Деструктор
-    ~DirectedGraph()
-    {
-        for (LinkedList<Vertex>* node : adjacencyList_)
-        {
-            delete node;
-        }
-        adjacencyList_.clear();
-    }
+    ~DirectedGraph() = default;
 
     // Методы
 
@@ -130,9 +121,9 @@ public:
     double removeVertex(size_t origin, size_t destination); 
 
     // Алгоритм Дейкстры для поиска кратчайших путей
-    std::unordered_map<double> dijkstra(size_t origin) const;
+    std::unordered_map<size_t, double> dijkstra(size_t origin) const;
     // Алгоритм Беллмана — Форда для поиска кратчайших путей
-    std::unordered_map<double> bellmanFord(size_t origin) const;
+    std::unordered_map<size_t, double> bellmanFord(size_t origin) const;
     // Волновой алгоритм для поиска кратчайшего пути между заданной парой вершин
     size_t wave(size_t origin, size_t destination) const;    
 
@@ -152,7 +143,7 @@ private:
 
     size_t size_; // Вместимость графа
     size_t realSize_; // Количество узов в графе
-    std::vector<std::list<Vertex>*> adjacencyList_; // Представление графа в виде списка смежности
+    std::vector<std::unique_ptr<std::list<Vertex>>> adjacencyList_; // Представление графа в виде списка смежности
 
     // Методы
 
