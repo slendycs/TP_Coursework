@@ -1,13 +1,26 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(TP_Coursework VERSION 0.1.0 LANGUAGES C CXX)
-
 enable_testing()
 
-add_library(TP_Coursework
-    directed_graph.cpp
-    directed_graph.h
+
+add_library(Directed_Graph
+    graph/directed_graph.cpp
+    graph/directed_graph.h
+    graph/graph_io.h
 )
 
+add_library(UI
+    user_interface/command_handler.cpp
+    user_interface/commands.cpp
+)
+
+
+add_executable(App main.cpp)
+
+target_link_libraries(App 
+    Directed_Graph
+    UI
+)
 
 # GoogleTest
 include(FetchContent)
@@ -29,7 +42,7 @@ foreach(test_source ${TEST_SOURCES})
     
     target_link_libraries(${test_name}
         PRIVATE 
-        TP_Coursework
+        Directed_Graph
         GTest::gtest_main
     )
     

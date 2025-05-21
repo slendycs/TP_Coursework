@@ -25,6 +25,11 @@ DirectedGraph::Vertex *DirectedGraph::searchVertex(size_t origin, size_t destina
     return nullptr;
 }
 
+size_t DirectedGraph::size() const
+{
+    return realSize_;
+}
+
 bool DirectedGraph::isOnlyPositiveVertexes() const
 {
     // Перебираем каждый узел в графе
