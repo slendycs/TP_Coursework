@@ -1,4 +1,4 @@
-#include "../directed_graph.h"
+#include "../graph/directed_graph.h"
 #include "../build/_deps/googletest-src/googletest/include/gtest/gtest.h"
 #include <limits>
 

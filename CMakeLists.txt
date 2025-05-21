@@ -4,9 +4,9 @@ project(TP_Coursework VERSION 0.1.0 LANGUAGES C CXX)
 enable_testing()
 
 add_library(Directed_Graph
-    directed_graph.cpp
-    directed_graph.h
-    graph_io.h
+    graph/directed_graph.cpp
+    graph/directed_graph.h
+    graph/graph_io.h
 )
 
 add_executable(App main.cpp)

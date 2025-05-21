@@ -91,13 +91,13 @@ std::istream& operator>>(std::istream& in, DirectedGraph& graph)
 // Функция для чтения данных из файла в граф
 bool readData(std::string fileName, DirectedGraph& graph)
 {   
-    // Открываем файл
-    std::ifstream file(fileName);
+
 
     // Открываем файл
+    std::ifstream file(fileName);
     if (!file.is_open())
     {
-        std::cerr << "\033[31mError: Failed to open file\033[0m " << fileName  << "\n";
+        std::cerr << "\033[31mError: Failed to open file\033[0m" << "\n";
         return false;
     }
 
