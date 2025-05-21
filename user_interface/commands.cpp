@@ -41,3 +41,19 @@ void dijkstra(size_t origin, std::ostream& out, DirectedGraph& graph)
     }
 }
 
+void bellman(size_t origin, std::ostream& out, DirectedGraph& graph)
+{
+    try
+    {
+        auto result = graph.bellmanFord(origin);
+    
+        for (auto& key: result)
+        {
+            out << "key: " << key.first << " " << "distance: " << key.second << "\n"; 
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+}

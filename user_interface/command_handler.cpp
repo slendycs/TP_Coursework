@@ -21,6 +21,7 @@ void commandHandler(std::istream& in, std::ostream& out, DirectedGraph& graph)
             std::string key;
             in >> key;
 
+            // Проверяем аргумент
             if (isNumber(key))
             {
                 dijkstra(std::stoi(key), out, graph);
@@ -29,11 +30,20 @@ void commandHandler(std::istream& in, std::ostream& out, DirectedGraph& graph)
         }
         else if (commandName == "Bellman-Ford")
         {
-         
+            // Считываем аргументы команды
+            std::string key;
+            in >> key;
+
+            // Проверяем аргумент
+            if (isNumber(key))
+            {
+                bellman(std::stoi(key), out, graph);
+            }
+            else out << "\033[31mInvalid argument!\033[0m\n";
         }
         else if (commandName == "Wave")
         {
-            
+           
         }
         else
         {
