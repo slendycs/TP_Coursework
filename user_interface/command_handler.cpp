@@ -43,7 +43,16 @@ void commandHandler(std::istream& in, std::ostream& out, DirectedGraph& graph)
         }
         else if (commandName == "Wave")
         {
-           
+            // Считываем аргументы команды
+            std::string origin;
+            std::string destination;
+            in >> origin >> destination;
+
+            if (isNumber(origin) && isNumber(destination))
+            {
+                out << graph.wave(std::stoi(origin), std::stoi(destination)) << "\n";
+            }
+            else out << "\033[31mInvalid argument!\033[0m\n";
         }
         else
         {
