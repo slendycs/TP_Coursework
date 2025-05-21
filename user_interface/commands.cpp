@@ -1,4 +1,11 @@
 #include "../graph/directed_graph.h"
+#include <algorithm>
+
+bool isNumber(std::string& line)
+{
+    if (line.empty()) return false;
+    return std::all_of(line.begin(), line.end(), ::isdigit) && std::stol(line) >= 0;
+}
 
 void help(std::ostream& out)
 {
@@ -16,3 +23,21 @@ void help(std::ostream& out)
     out << "4: \033[32mWave\033[0m \033[31m<origin>\033[0m \033[31m<destination>\033[0m\n";
     out << "   Finds the shortest distance between nodes using the wave algorithm\n";
 }
+
+void dijkstra(size_t origin, std::ostream& out, DirectedGraph& graph)
+{
+    try
+    {
+        auto result = graph.dijkstra(origin);
+    
+        for (auto& key: result)
+        {
+            out << "key: " << key.first << " " << "distance: " << key.second << "\n"; 
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+}
+
