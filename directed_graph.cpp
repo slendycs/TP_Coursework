@@ -264,3 +264,52 @@ std::unordered_map<size_t, double> DirectedGraph::bellmanFord(size_t origin) con
     distances.erase(origin);
     return distances;
 }
+
+size_t DirectedGraph::wave(size_t origin, size_t destination) const
+{
+    // Проверка на наличие узлов в графе
+    if (!searchNode(origin)) throw std::invalid_argument("Origin node is not in the graph");
+    if (!searchNode(destination)) throw std::invalid_argument("Destination node is not in the graph");
+    if (origin == destination) return 0;
+
+    // Инициализация расстояний
+    std::queue<size_t> nodesQueue;          // Очередь обхода узлов
+    std::unordered_map<size_t, size_t> distances; // Хранит расстояние от origin до каждого узла
+
+    // Инициализация начальной вершины
+    nodesQueue.push(origin);
+    distances[origin] = 0;
+
+    // Цикл обхода узлов
+    while (!nodesQueue.empty()) 
+    {
+        size_t currentNode = nodesQueue.front();
+        nodesQueue.pop();
+
+        // Если достигли целевого узла, возвращаем расстояние
+        if (currentNode == destination) 
+        {
+            return distances[currentNode];
+        }
+
+        // Получаем список смежных узлов
+        const auto& edges = adjacencyList_.at(currentNode);
+        if (!edges) continue; // У узла нет рёбер
+
+        // Обход всех рёбер текущего узла
+        for (const auto& vertex : *edges) 
+        {
+            size_t neighbor = vertex.destination_;
+
+            // Если соседний узел ещё не посещён
+            if (distances.find(neighbor) == distances.end()) 
+            {
+                distances[neighbor] = distances[currentNode] + 1;
+                nodesQueue.push(neighbor);
+            }
+        }
+    }
+
+    // Если путь не найден
+    throw std::logic_error("No path exists between the nodes");
+}
