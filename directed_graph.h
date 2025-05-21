@@ -109,6 +109,8 @@ public:
 
     // Проверка наличия узлов в графе
     bool isEmpty() const;
+    // Получение количества элементов в графе
+    size_t size() const;
 
     // Проверка наличия узла в графе
     bool searchNode(size_t key) const;
@@ -155,6 +157,8 @@ private:
     Vertex* searchVertex(size_t origin, size_t destination) const;
     // Проверка имеют ли все рёбра положительные веса
     bool isOnlyPositiveVertexes() const;
-};
 
+    
+
+};
 #endif
