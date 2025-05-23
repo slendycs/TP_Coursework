@@ -81,18 +81,25 @@ std::istream& operator>>(std::istream& in, DirectedGraph& graph)
     vertexIO temp;
     if (in >> temp)
     {
-        if (graph.searchNode(temp.origin) == false) graph.insertNode(temp.origin);
-        if (graph.searchNode(temp.destination) == false) graph.insertNode(temp.destination);
-        graph.addVertex(temp.origin, temp.weight, temp.destination);
+        try
+        {
+            if (graph.searchNode(temp.origin) == false) graph.insertNode(temp.origin);
+            if (graph.searchNode(temp.destination) == false) graph.insertNode(temp.destination);
+            graph.addVertex(temp.origin, temp.weight, temp.destination);
+        }
+        catch(const std::exception& e)
+        {
+            in.setstate(std::ios::failbit);
+        }
+        
+        
     }
     return in;
 }
 
 // Функция для чтения данных из файла в граф
 bool readData(std::string fileName, DirectedGraph& graph)
-{   
-
-
+{
     // Открываем файл
     std::ifstream file(fileName);
     if (!file.is_open())
