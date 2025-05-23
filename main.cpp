@@ -10,11 +10,8 @@ int main()
     {
         std::cout << "\033[32mData read successfully!\033[0m\n";
         commandHandler(std::cin, std::cout, graph);
-
     }
     else return 1;
     
-
-
     return 0;
 }

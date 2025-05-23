@@ -37,7 +37,7 @@ void dijkstra(size_t origin, std::ostream& out, DirectedGraph& graph)
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        out << e.what() << '\n';
     }
 }
 
@@ -54,6 +54,6 @@ void bellman(size_t origin, std::ostream& out, DirectedGraph& graph)
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        out << e.what() << '\n';
     }
 }
